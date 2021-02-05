@@ -273,13 +273,15 @@ function configureCredentials(config, ui) {
 }
 
 function checkRateLimit(headers) {
-  if (headers.status.match(/^401/))
-    throw 'Unauthorized response for GitHub API.\n' +
-      'Use %jspm registry config github% to reconfigure the credentials, or update them in your ~/.netrc file.';
-  if (headers.status.match(/^406/))
-    throw 'Unauthorized response for GitHub API.\n' +
+  if (headers.status) {
+    if (headers.status.match(/^401/))
+      throw 'Unauthorized response for GitHub API.\n' +
+        'Use %jspm registry config github% to reconfigure the credentials, or update them in your ~/.netrc file.';
+    if (headers.status.match(/^406/))
+      throw 'Unauthorized response for GitHub API.\n' +
       'If using an access token ensure it has public_repo access.\n' +
       'Use %jspm registry config github% to configure the credentials, or add them to your ~/.netrc file.';
+  }
 
   if (headers['x-ratelimit-remaining'] != '0')
     return;
